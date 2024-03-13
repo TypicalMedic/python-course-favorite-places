@@ -24,6 +24,9 @@ async def get_list(
     limit: int = Query(
         20, gt=0, le=100, description="Ограничение на количество объектов в выборке"
     ),
+    offset: int = Query(
+        0, gt=-1, description="На сколько объектов в выборке требуется сместиться"
+    ),
     places_service: PlacesService = Depends(),
 ) -> PlacesListResponse:
     """
@@ -34,7 +37,7 @@ async def get_list(
     :return:
     """
 
-    return PlacesListResponse(data=await places_service.get_places_list(limit=limit))
+    return PlacesListResponse(data=await places_service.get_places_list(limit=limit, offset=offset))
 
 
 @router.get(

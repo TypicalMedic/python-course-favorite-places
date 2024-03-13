@@ -33,7 +33,7 @@ class PlacesService:
         self.session = session
         self.places_repository = PlacesRepository(session)
 
-    async def get_places_list(self, limit: int) -> list[Place]:
+    async def get_places_list(self, limit: int, offset: int) -> list[Place]:
         """
         Получение списка любимых мест.
 
@@ -41,7 +41,7 @@ class PlacesService:
         :return:
         """
 
-        return await self.places_repository.find_all_by(limit=limit)
+        return await self.places_repository.find_all_by(limit=limit, offset=offset)
 
     async def get_place(self, primary_key: int) -> Optional[Place]:
         """
