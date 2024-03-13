@@ -53,6 +53,20 @@ class PlacesService:
 
         return await self.places_repository.find(primary_key)
 
+    async def get_current_place(self) -> Optional[Place]:
+        """
+        Получение текущих координат по ip.
+
+        :return:
+        """
+        if location := await LocationClient().get_current_location():
+            return Place(
+                latitude=location.latitude,
+                longitude=location.longitude,
+            )
+            
+        return None
+
     async def create_place(self, place: Place) -> Optional[int]:
         """
         Создание нового объекта любимого места по переданным данным.

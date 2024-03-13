@@ -16,6 +16,15 @@ class PlaceUpdate(BaseModel):
     description: Optional[str] = Field(None, min_length=3, max_length=255)
 
 
+class PlaceLocation(BaseModel):
+    """
+    Схема данных для текущей локации.
+    """
+
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
 class PlaceResponse(BaseModel):
     """
     Схема для представления данных о списке любимых мест.

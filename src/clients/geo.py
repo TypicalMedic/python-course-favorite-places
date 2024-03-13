@@ -8,8 +8,8 @@ from urllib.parse import urlencode, urljoin
 import httpx
 
 from clients.base.base import BaseClient
-from clients.shemas import LocalityDTO
-
+from clients.shemas import LocalityDTO, LocationDTO
+import settings
 
 class LocationClient(BaseClient):
     """
@@ -62,5 +62,54 @@ class LocationClient(BaseClient):
                 if response.get("locality", "").strip()
                 else None,
             )
+
+        return None
+
+    async def get_current_location(self) -> Optional[LocationDTO]:
+        """
+        Получение данных о местонахождении по ip.
+
+        :return:
+        """
+        ip = self.get_current_ip()
+
+        if ip is None:
+            return None
+        
+        
+        endpoint = "ip-geolocation"
+        query_params = {
+            "ip": ip,
+            "key": settings.settings.geo_api_key,
+            "localityLanguage": "en",
+        }
+        url = urljoin(
+            self.base_url,
+            f"{endpoint}?{urlencode(query_params)}",
+        )
+        if response := await self._request(url):
+            return LocationDTO(
+                latitude=response.get("location").get("latitude"),
+                longitude=response.get("location").get("longitude")
+            )
+
+        return None
+    
+
+    async def get_current_ip(self) -> Optional[str]:
+        """
+        Получение данных о ip.
+
+        :return:
+        """
+
+        endpoint = "client-ip"
+        url = urljoin(
+            self.base_url,
+            f"{endpoint}",
+        )
+        
+        if response := await self._request(url):
+            return response.get("ipString")
 
         return None

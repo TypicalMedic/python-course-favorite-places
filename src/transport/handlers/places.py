@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, status
 
 from exceptions import ApiHTTPException, ObjectNotFoundException
 from models.places import Place
-from schemas.places import PlaceResponse, PlacesListResponse, PlaceUpdate
+from schemas.places import PlaceResponse, PlacesListResponse, PlaceUpdate, PlaceLocation
 from schemas.routes import MetadataTag
 from services.places_service import PlacesService
 
@@ -41,6 +41,29 @@ async def get_list(
 
 
 @router.get(
+    "/current",
+    summary="Получение текущих координат",
+    response_model=PlaceLocation,
+)
+async def get_current_coords(
+    places_service: PlacesService = Depends()
+) -> PlaceLocation:
+    """
+    Получение текущих координат по ip устройства.
+    
+    :param places_service: Сервис для работы с информацией о любимых местах.
+    :return:
+    """
+
+    if place := await places_service.get_current_place():
+        return PlaceLocation(latitude=place.latitude, longitude=place.longitude)
+
+    raise ApiHTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail="Ошибка сервера",
+    )
+
+@router.get(
     "/{primary_key}",
     summary="Получение объекта по его идентификатору",
     response_model=PlaceResponse,
@@ -60,6 +83,8 @@ async def get_one(
         return PlaceResponse(data=place)
 
     raise ObjectNotFoundException
+
+
 
 
 @router.post(
