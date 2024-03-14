@@ -42,7 +42,6 @@ class EventProducer:
 
         :param queue_name: Название очереди.
         :param body: Данные сообщения.
-        :return:
         """
 
         logger.info("Received data to publish (queue: '%s').", queue_name)

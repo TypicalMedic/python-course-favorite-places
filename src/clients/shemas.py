@@ -28,3 +28,19 @@ class LocalityDTO(BaseModel):
     locality: Optional[str] = Field(
         None, title="Местонахождение", min_length=2, max_length=255
     )
+
+
+class LocationDTO(BaseModel):
+    """
+    Модель для представления данных о локации.
+
+    .. code-block::
+
+        LocationDTO(
+            latitude=58.0,
+            longitude=56.22,
+        )
+    """
+
+    latitude: Optional[float] = Field(None, title="Широта")
+    longitude: Optional[float] = Field(None, title="Долгота")

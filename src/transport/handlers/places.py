@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, status
 
 from exceptions import ApiHTTPException, ObjectNotFoundException
 from models.places import Place
-from schemas.places import PlaceResponse, PlacesListResponse, PlaceUpdate
+from schemas.places import PlaceLocation, PlaceResponse, PlacesListResponse, PlaceUpdate
 from schemas.routes import MetadataTag
 from services.places_service import PlacesService
 
@@ -24,6 +24,9 @@ async def get_list(
     limit: int = Query(
         20, gt=0, le=100, description="Ограничение на количество объектов в выборке"
     ),
+    offset: int = Query(
+        0, gt=-1, description="На сколько объектов в выборке требуется сместиться"
+    ),
     places_service: PlacesService = Depends(),
 ) -> PlacesListResponse:
     """
@@ -31,10 +34,36 @@ async def get_list(
 
     :param limit: Ограничение на количество объектов в выборке.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Список любимых мест с пагинацией.
     """
 
-    return PlacesListResponse(data=await places_service.get_places_list(limit=limit))
+    return PlacesListResponse(
+        data=await places_service.get_places_list(limit=limit, offset=offset)
+    )
+
+
+@router.get(
+    "/current",
+    summary="Получение текущих координат",
+    response_model=PlaceLocation,
+)
+async def get_current_coords(
+    places_service: PlacesService = Depends(),
+) -> PlaceLocation:
+    """
+    Получение текущих координат по ip устройства.
+
+    :param places_service: Сервис для работы с информацией о любимых местах.
+    :return: Текущие координаты.
+    """
+
+    if place := await places_service.get_current_place():
+        return PlaceLocation(latitude=place.latitude, longitude=place.longitude)
+
+    raise ApiHTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail="Ошибка сервера",
+    )
 
 
 @router.get(
@@ -50,7 +79,7 @@ async def get_one(
 
     :param primary_key: Идентификатор объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Любимое место.
     """
 
     if place := await places_service.get_place(primary_key):
@@ -73,7 +102,7 @@ async def create(
 
     :param place: Данные создаваемого объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Данные о новом месте.
     """
 
     if primary_key := await places_service.create_place(place):
@@ -99,7 +128,7 @@ async def update(
     :param primary_key: Идентификатор объекта.
     :param place: Данные для обновления объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Обновленное место.
     """
 
     if not await places_service.update_place(primary_key, place):
@@ -119,25 +148,24 @@ async def delete(primary_key: int, places_service: PlacesService = Depends()) ->
 
     :param primary_key: Идентификатор объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
     """
 
     if not await places_service.delete_place(primary_key):
         raise ObjectNotFoundException
 
 
-@router.post(
-    "",
-    summary="Создание нового объекта с автоматическим определением координат",
-    response_model=PlaceResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-async def create_auto() -> PlaceResponse:
-    """
-    Создание нового объекта любимого места с автоматическим определением координат.
+# @router.post(
+#     "",
+#     summary="Создание нового объекта с автоматическим определением координат",
+#     response_model=PlaceResponse,
+#     status_code=status.HTTP_201_CREATED,
+# )
+# async def create_auto() -> PlaceResponse:
+#     """
+#     Создание нового объекта любимого места с автоматическим определением координат.
 
-    :return:
-    """
+#     :return:
+#     """
 
     # Пример:
     #

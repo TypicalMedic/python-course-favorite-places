@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     database_url: PostgresDsn = Field(
         default="postgresql+asyncpg://favorite_places_user:secret@db/favorite_places"
     )
+    geo_api_key: str = Field(default="bdc_063cb2f4cbfb4719b9e1b954456ca38b")
     #: конфигурация RabbitMQ
     rabbitmq: RabbitMQConfig
 

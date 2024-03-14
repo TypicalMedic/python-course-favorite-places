@@ -12,7 +12,7 @@ async def get_session() -> AsyncGenerator:
     """
     Получение объекта сессии для асинхронного подключения к БД.
 
-    :return:
+    :return: Объект сессии для асинхронного подключения к БД.
     """
 
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

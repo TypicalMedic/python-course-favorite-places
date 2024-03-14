@@ -33,25 +33,39 @@ class PlacesService:
         self.session = session
         self.places_repository = PlacesRepository(session)
 
-    async def get_places_list(self, limit: int) -> list[Place]:
+    async def get_places_list(self, limit: int, offset: int) -> list[Place]:
         """
         Получение списка любимых мест.
 
         :param limit: Ограничение на количество элементов в выборке.
-        :return:
+        :return: Список любимых мест.
         """
 
-        return await self.places_repository.find_all_by(limit=limit)
+        return await self.places_repository.find_all_by(limit=limit, offset=offset)
 
     async def get_place(self, primary_key: int) -> Optional[Place]:
         """
         Получение объекта любимого места по его идентификатору.
 
         :param primary_key: Идентификатор объекта.
-        :return:
+        :return: Место.
         """
 
         return await self.places_repository.find(primary_key)
+
+    async def get_current_place(self) -> Optional[Place]:
+        """
+        Получение текущих координат по ip.
+
+        :return: Текущие координаты.
+        """
+        if location := await LocationClient().get_current_location():
+            return Place(
+                latitude=location.latitude,
+                longitude=location.longitude,
+            )
+
+        return None
 
     async def create_place(self, place: Place) -> Optional[int]:
         """
@@ -96,7 +110,7 @@ class PlacesService:
 
         :param primary_key: Идентификатор объекта.
         :param place: Данные для обновления объекта.
-        :return:
+        :return: Количество измененных строк.
         """
 
         # при изменении координат – обогащение данных путем получения дополнительной информации от API
@@ -118,7 +132,7 @@ class PlacesService:
         Удаление объекта любимого места по его идентификатору.
 
         :param primary_key: Идентификатор объекта.
-        :return:
+        :return: Количество удаленных строк.
         """
 
         matched_rows = await self.places_repository.delete_by(id=primary_key)
