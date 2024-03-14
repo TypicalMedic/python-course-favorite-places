@@ -34,7 +34,7 @@ async def get_list(
 
     :param limit: Ограничение на количество объектов в выборке.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Список любимых мест с пагинацией.
     """
 
     return PlacesListResponse(
@@ -54,7 +54,7 @@ async def get_current_coords(
     Получение текущих координат по ip устройства.
 
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Текущие координаты.
     """
 
     if place := await places_service.get_current_place():
@@ -79,7 +79,7 @@ async def get_one(
 
     :param primary_key: Идентификатор объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Любимое место.
     """
 
     if place := await places_service.get_place(primary_key):
@@ -102,7 +102,7 @@ async def create(
 
     :param place: Данные создаваемого объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Данные о новом месте.
     """
 
     if primary_key := await places_service.create_place(place):
@@ -128,7 +128,7 @@ async def update(
     :param primary_key: Идентификатор объекта.
     :param place: Данные для обновления объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
+    :return: Обновленное место.
     """
 
     if not await places_service.update_place(primary_key, place):
@@ -148,25 +148,24 @@ async def delete(primary_key: int, places_service: PlacesService = Depends()) ->
 
     :param primary_key: Идентификатор объекта.
     :param places_service: Сервис для работы с информацией о любимых местах.
-    :return:
     """
 
     if not await places_service.delete_place(primary_key):
         raise ObjectNotFoundException
 
 
-@router.post(
-    "",
-    summary="Создание нового объекта с автоматическим определением координат",
-    response_model=PlaceResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-async def create_auto() -> PlaceResponse:
-    """
-    Создание нового объекта любимого места с автоматическим определением координат.
+# @router.post(
+#     "",
+#     summary="Создание нового объекта с автоматическим определением координат",
+#     response_model=PlaceResponse,
+#     status_code=status.HTTP_201_CREATED,
+# )
+# async def create_auto() -> PlaceResponse:
+#     """
+#     Создание нового объекта любимого места с автоматическим определением координат.
 
-    :return:
-    """
+#     :return:
+#     """
 
     # Пример:
     #

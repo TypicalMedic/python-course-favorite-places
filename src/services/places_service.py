@@ -38,7 +38,7 @@ class PlacesService:
         Получение списка любимых мест.
 
         :param limit: Ограничение на количество элементов в выборке.
-        :return:
+        :return: Список любимых мест.
         """
 
         return await self.places_repository.find_all_by(limit=limit, offset=offset)
@@ -48,7 +48,7 @@ class PlacesService:
         Получение объекта любимого места по его идентификатору.
 
         :param primary_key: Идентификатор объекта.
-        :return:
+        :return: Место.
         """
 
         return await self.places_repository.find(primary_key)
@@ -57,7 +57,7 @@ class PlacesService:
         """
         Получение текущих координат по ip.
 
-        :return:
+        :return: Текущие координаты.
         """
         if location := await LocationClient().get_current_location():
             return Place(
@@ -110,7 +110,7 @@ class PlacesService:
 
         :param primary_key: Идентификатор объекта.
         :param place: Данные для обновления объекта.
-        :return:
+        :return: Количество измененных строк.
         """
 
         # при изменении координат – обогащение данных путем получения дополнительной информации от API
@@ -132,7 +132,7 @@ class PlacesService:
         Удаление объекта любимого места по его идентификатору.
 
         :param primary_key: Идентификатор объекта.
-        :return:
+        :return: Количество удаленных строк.
         """
 
         matched_rows = await self.places_repository.delete_by(id=primary_key)

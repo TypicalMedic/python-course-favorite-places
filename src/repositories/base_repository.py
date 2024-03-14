@@ -36,7 +36,7 @@ class BaseRepository(ABC):
         Получение атрибута модели по наименованию.
 
         :param attr:
-        :return:
+        :return: Атрибут модели.
         """
 
         return getattr(self.model, attr)
@@ -46,7 +46,7 @@ class BaseRepository(ABC):
         Формирование выборки с условиями.
 
         :param kwargs: Аргументы для формирования условий выборки.
-        :return:
+        :return: Выборка.
         """
 
         query = select(self.model)
@@ -68,7 +68,7 @@ class BaseRepository(ABC):
         Поиск объекта по его идентификатору.
 
         :param primary_key: Идентификатор объекта
-        :return:
+        :return: Объект.
         """
 
         cursor = await self.session.execute(self._select(id=primary_key))
@@ -89,7 +89,7 @@ class BaseRepository(ABC):
         :param order_by: Сортировка (по умолчанию - ID)
         :param limit: Лимит на количество элементов в выборке
         :param kwargs: Условия для выборки
-        :return:
+        :return: Список подходящих объектов.
         """
 
         order_by = order_by or self.get_attr("id")
@@ -103,7 +103,7 @@ class BaseRepository(ABC):
         Создание записи.
 
         :param model: Данные модели для создания.
-        :return:
+        :return: ID созданной записи.
         """
 
         values = (
@@ -125,7 +125,7 @@ class BaseRepository(ABC):
 
         :param primary_key: Первичный ключ
         :param kwargs: Атрибуты и их значения
-        :return:
+        :return: Количество обновленных строк.
         """
 
         statement = (
@@ -143,7 +143,6 @@ class BaseRepository(ABC):
         Удаление записи по переданному условию.
 
         :param kwargs: Значения атрибутов
-        :return:
         """
 
         statement = self._select(**kwargs)

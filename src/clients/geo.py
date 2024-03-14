@@ -40,7 +40,7 @@ class LocationClient(BaseClient):
 
         :param latitude: Широта
         :param longitude: Долгота
-        :return:
+        :return: Информация о месте
         """
 
         endpoint = "reverse-geocode-client"
@@ -70,7 +70,7 @@ class LocationClient(BaseClient):
         """
         Получение данных о местонахождении по ip.
 
-        :return:
+        :return: Ширина и долгота текущего местоположения.
         """
         ip = self.get_current_ip()
 
@@ -97,9 +97,9 @@ class LocationClient(BaseClient):
 
     async def get_current_ip(self) -> Optional[str]:
         """
-        Получение данных о ip.
+        Получение данных о IP.
 
-        :return:
+        :return: IP устройства.
         """
 
         endpoint = "client-ip"
