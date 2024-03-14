@@ -42,9 +42,5 @@ class LocationDTO(BaseModel):
         )
     """
 
-    latitude: Optional[float] = Field(
-        None, title="Широта"
-    )
-    longitude: Optional[float] = Field(
-        None, title="Долгота"
-    )
+    latitude: Optional[float] = Field(None, title="Широта")
+    longitude: Optional[float] = Field(None, title="Долгота")

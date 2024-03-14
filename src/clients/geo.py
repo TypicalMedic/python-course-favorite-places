@@ -7,9 +7,10 @@ from urllib.parse import urlencode, urljoin
 
 import httpx
 
+import settings
 from clients.base.base import BaseClient
 from clients.shemas import LocalityDTO, LocationDTO
-import settings
+
 
 class LocationClient(BaseClient):
     """
@@ -75,8 +76,7 @@ class LocationClient(BaseClient):
 
         if ip is None:
             return None
-        
-        
+
         endpoint = "ip-geolocation"
         query_params = {
             "ip": ip,
@@ -90,11 +90,10 @@ class LocationClient(BaseClient):
         if response := await self._request(url):
             return LocationDTO(
                 latitude=response.get("location").get("latitude"),
-                longitude=response.get("location").get("longitude")
+                longitude=response.get("location").get("longitude"),
             )
 
         return None
-    
 
     async def get_current_ip(self) -> Optional[str]:
         """
@@ -108,7 +107,7 @@ class LocationClient(BaseClient):
             self.base_url,
             f"{endpoint}",
         )
-        
+
         if response := await self._request(url):
             return response.get("ipString")
 

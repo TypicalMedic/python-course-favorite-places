@@ -64,7 +64,7 @@ class PlacesService:
                 latitude=location.latitude,
                 longitude=location.longitude,
             )
-            
+
         return None
 
     async def create_place(self, place: Place) -> Optional[int]:
